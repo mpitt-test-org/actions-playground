@@ -1,0 +1,24 @@
+name: build-webpack
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Debug variables
+        run: |
+          echo "github object: ${{ toJSON(github) }}"
+
+      - name: Create build archive
+        uses: actions/upload-artifact@v2
+        with:
+          # https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions
+          # for pull_requests, use head_ref, 
+          name: "build-${{ github.sha }}"
+          path: README.md
+          retention-days: 2
