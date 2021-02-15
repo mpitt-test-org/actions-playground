@@ -22,3 +22,12 @@ jobs:
           name: "build-${{ github.event.pull_request.head.sha || github.sha }}"
           path: README.md
           retention-days: 2
+
+      - name: Save github.event for follow-up workflows
+        run: echo '${{ toJSON(github.event) }}' > /tmp/pr-event.json
+
+      - name: Create artifact of event.json
+        uses: actions/upload-artifact@v2
+        with:
+          name: pr-event.json
+          path: /tmp/pr-event.json
