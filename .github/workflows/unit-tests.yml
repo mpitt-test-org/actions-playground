@@ -6,33 +6,22 @@ on:
 
 jobs:
   unit-tests:
-    if: github.event.workflow_run.event == 'pull_request'
+    # if: github.event.workflow_run.event == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: Debug context
+        env:
+          GITHUB_EVENT: ${{ toJSON(github.event) }}
         run: |
-          echo "${{ toJSON(github) }}"
+          echo "$GITHUB_EVENT"
           echo "---------"
+          echo "push SHA to build: TODO"
           echo "PR SHA to build: ${{ github.event.workflow_run.head_sha }}"
 
-      - name: Download PR payload artifact
-        uses: dawidd6/action-download-artifact@v2
+      - name: Download webpack artifact
+        # 2.14.0; if you update this, audit the diff and ensure that it does not leak/abuse secrets
+        uses: dawidd6/action-download-artifact@b9571484721e8187f1fd08147b497129f8972c74
         with:
           workflow: build-webpack
           run_id: ${{ github.event.workflow_run.id }}
-          name: pr-event.json
-
-      - name: Show PR payload artifact
-        run: |
-          ls -lR
-          cat pr-event.json
-          rm pr-event.json
-
-      - name: Download all artifacts
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          workflow: build-webpack
-          run_id: ${{ github.event.workflow_run.id }}
-
-      - name: Show  all build artifacts
-        run: ls -lR
+          name: webpack
